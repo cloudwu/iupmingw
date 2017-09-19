@@ -82,7 +82,7 @@ IUPLUASRC = iuplua.c iuplua_api.c iuplua_draw.c iuplua_tree_aux.c iuplua_scanf.c
 OBJIUPLUA := $(patsubst %.c,$(ODIR)/%.o,$(IUPLUASRC))
 OBJCTRL := $(patsubst %.lua,$(ODIR)/il_%.o,$(CTRLUA))
 
-$(OBJIUPLUA) : $(ODIR)/%.o : ../srclua5/%.c $(LH)  | $(ODIR)
+$(OBJIUPLUA) : $(ODIR)/%.o : $(IUPSRC)/srclua5/%.c $(LH)  | $(ODIR)
 	$(CC) $(CFLAGS) -c -o $@ $< -DIUPLUA_USELH -I$(IUPSRC)/include -I$(IUPSRC)/src -I$(ODIR) -I$(IUPSRC)/srclua5 $(LUAINC)
 
 $(OBJCTRL) : %.o : %.c  | $(ODIR)

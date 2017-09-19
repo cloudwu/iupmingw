@@ -19,6 +19,7 @@ git clone https://github.com/cloudwu/iupmingw.git mingw
 
 保证安装了 lua ，确认 Makefile 中设置了正确 lua 的 include lib bin 路径，最后 make 。
 
+你也可以在 https://github.com/cloudwu/iupmingw/releases 下载我编译好的版本。
 
 生成 iup.exe 后，就可以玩了：
 

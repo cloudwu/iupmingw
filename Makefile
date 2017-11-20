@@ -1,7 +1,8 @@
 ODIR = o
 IUPSRC = ..
 LUAINC = -I/usr/local/include
-LUALIB = -L/usr/local/lib -llua
+#LUALIB = -L/usr/local/lib -llua
+LUALIB = -L/usr/local/bin -llua53
 LUABIN = /usr/local/bin/lua.exe
 
 AR= ar rcu
@@ -13,9 +14,9 @@ INCLUDES += src/win
 # Windows XP minimum
 WIN32VER = 0x0501
 
-DEFINES = _WIN32_WINNT=$(WIN32VER) _WIN32_IE=0x600 WINVER=$(WIN32VER) UNICODE
+DEFINES = _WIN32_WINNT=$(WIN32VER) _WIN32_IE=0x600 WINVER=$(WIN32VER) UNICODE IUP_DLL
 
-all : iup.exe
+all : iup.exe | iupscintilla.dll iupluaimglib.dll
 
 SRCIUP = iup_array.c iup_callback.c iup_dlglist.c iup_attrib.c iup_focus.c iup_font.c \
       iup_globalattrib.c iup_object.c iup_key.c iup_layout.c iup_ledlex.c iup_names.c \
@@ -49,6 +50,7 @@ OBJIUP := $(patsubst %.c,$(ODIR)/%.o,$(SRCIUP))
 OBJWIN := $(patsubst %.c,$(ODIR)/%.o,$(SRCWIN))
 
 CFLAGS = -O2 -Wall 
+#CFLAGS = -g
 COMPILE = $(CC) -c -o $@ $< $(CFLAGS) $(addprefix -I$(IUPSRC)/,$(INCLUDES)) $(addprefix -D,$(DEFINES))
 
 # IUP lua warpper
@@ -102,11 +104,20 @@ $(OBJWIN): $(ODIR)/%.o: $(IUPSRC)/src/win/%.c | $(ODIR)
 $(ODIR)/libiup.a : $(OBJIUP) $(OBJWIN) $(OBJIUPLUA) $(OBJCTRL)
 	$(AR) $@ $^
 
-iup.exe : iupmain.c $(ODIR)/libiup.a
-	gcc $(CFLAGS) -o $@ $^ $(LUAINC) $(LUALIB) -lgdi32 -lcomdlg32 -lcomctl32 -lole32 -luuid # -mwindows
+iupscintilla.dll :
+	$(MAKE) -f Makefile.scintilla
+
+iupluaimglib.dll :
+	$(MAKE) -f Makefile.imglib
+
+luaiup.dll : $(OBJIUP) $(OBJWIN) $(OBJIUPLUA) $(OBJCTRL) 
+	$(CC) --shared -o $@ $^ -lgdi32 -lcomdlg32 -lcomctl32 -lole32 -luuid $(LUALIB)
+
+iup.exe : iupmain.c | luaiup.dll
+	gcc $(CFLAGS) -o $@ $^ -I$(IUPSRC)/include $(LUAINC) $(LUALIB) -L. -lluaiup -mwindows
 
 clean :
-	rm -rf $(ODIR) && rm -f *.exe
+	rm -rf $(ODIR) && rm -f *.exe && rm -f *.dll
 
 
 

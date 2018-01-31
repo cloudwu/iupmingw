@@ -16,7 +16,7 @@ WIN32VER = 0x0501
 
 DEFINES = _WIN32_WINNT=$(WIN32VER) _WIN32_IE=0x600 WINVER=$(WIN32VER) UNICODE IUP_DLL
 
-all : iup.exe | iupscintilla.dll iupluaimglib.dll
+all : iup.exe | scintilla.dll iupluaimglib.dll
 
 SRCIUP = iup_array.c iup_callback.c iup_dlglist.c iup_attrib.c iup_focus.c iup_font.c \
       iup_globalattrib.c iup_object.c iup_key.c iup_layout.c iup_ledlex.c iup_names.c \
@@ -106,7 +106,7 @@ $(OBJWIN): $(ODIR)/%.o: $(IUPSRC)/src/win/%.c | $(ODIR)
 $(ODIR)/libiup.a : $(OBJIUP) $(OBJWIN) $(OBJIUPLUA) $(OBJCTRL)
 	$(AR) $@ $^
 
-iupscintilla.dll :
+scintilla.dll :
 	$(MAKE) -f Makefile.scintilla
 
 iupluaimglib.dll :
